@@ -23,18 +23,18 @@ I mostly work with claude code. Write operations are already handled — Claude 
 ## Install
 
 ```bash
-# Clone (or add as git submodule)
-git clone https://github.com/tony-zhelonkin/notebook-tools-mcp.git
+# pip — install directly from GitHub
+pip install git+https://github.com/tony-zhelonkin/notebook-tools-mcp.git
 
-# Install in editable mode — Python can import the package,
-# and any code changes take effect without reinstalling
-pip install -e notebook-tools-mcp/
+# uv — same, faster
+uv pip install git+https://github.com/tony-zhelonkin/notebook-tools-mcp.git
 ```
 
-Or if you're already inside the cloned directory:
+For development (editable install from a local clone):
 
 ```bash
-pip install -e .
+git clone https://github.com/tony-zhelonkin/notebook-tools-mcp.git
+pip install -e notebook-tools-mcp/
 ```
 
 ## Configure
