@@ -4,7 +4,7 @@ Read-only MCP server for Jupyter notebook navigation. Reads `.ipynb` files direc
 
 ## Problem
 
-AI CLI agents (Claude Code, Gemini CLI, Codex) working inside VS Code Dev Containers don`t seem yet to have a good way to interact with Jupyter notebooks. Notebooks are JSON files where oftentimes 90%+ of the bytes are base64-encoded image outputs and execution metadata. Reading a 1MB notebook with a standard file-read tool wastes ~294K tokens on noise. Agents end up re-inventing notebook parsing logic every session, burning tokens on the same problem repeatedly.
+AI CLI agents (Claude Code, Gemini CLI, Codex) working inside VS Code Dev Containers don`t seem yet to have a good way of interacting with Jupyter notebooks. Notebooks are JSON files where oftentimes 90%+ of the bytes are base64-encoded image outputs and execution metadata. Reading a 1MB notebook with a standard file-read tool wastes ~294K tokens on noise. Agents end up re-inventing notebook parsing logic every session, burning tokens on the same problem repeatedly.
 
 I mostly work with claude code. Write operations are already handled — Claude Code has a built-in `NotebookEdit` tool for insert/replace/delete. The missing part for me was efficient *reading*.
 
