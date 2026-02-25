@@ -4,23 +4,34 @@ Read-only MCP server for Jupyter notebook navigation. Reads `.ipynb` files direc
 
 ## Problem
 
-AI CLI agents (Claude Code, Gemini CLI, Codex) working inside VS Code Dev Containers have no good way to interact with Jupyter notebooks. Notebooks are JSON files where 90%+ of the bytes are base64-encoded image outputs and execution metadata. Reading a 1MB notebook with a standard file-read tool wastes ~294K tokens on noise. Agents end up re-inventing notebook parsing logic every session, burning tokens on the same problem repeatedly.
+AI CLI agents (Claude Code, Gemini CLI, Codex) working inside VS Code Dev Containers don`t seem yet to have a good way to interact with Jupyter notebooks. Notebooks are JSON files where oftentimes 90%+ of the bytes are base64-encoded image outputs and execution metadata. Reading a 1MB notebook with a standard file-read tool wastes ~294K tokens on noise. Agents end up re-inventing notebook parsing logic every session, burning tokens on the same problem repeatedly.
 
-Meanwhile, write operations are already handled — Claude Code has a built-in `NotebookEdit` tool for insert/replace/delete. What's missing is efficient *reading*.
+I mostly work with claude code. Write operations are already handled — Claude Code has a built-in `NotebookEdit` tool for insert/replace/delete. The missing part for me was efficient *reading*.
 
 ## Design decisions
 
-**No Jupyter server.** The workflow is VS Code Remote Dev Container over SSH. Adding a Jupyter server means propagating that server stream to the local machine — extra memory, extra complexity, zero value when VS Code already renders notebooks natively.
+**No Jupyter server.** Personally, I mostly work with remote VS Code Remote Dev Containers (Docker) over SSH. Adding a Jupyter server means propagating that server stream to the local machine — extra memory, extra complexity, zero value for me when VS Code already renders notebooks natively.
 
 **No dependencies beyond `mcp`.** Notebooks are JSON. Python's stdlib `json` module reads them perfectly. Pulling in `nbformat` (and its 50+ transitive Jupyter ecosystem deps) to parse a JSON file is unnecessary weight in a container environment.
 
 **No write tools.** Claude Code's `NotebookEdit` handles insert, replace, and delete. Duplicating that here would create competing tools that confuse the agent. This server reads. `NotebookEdit` writes. Clean separation.
 
-**No execution.** Running code requires a kernel, which requires a server. That's the complexity this tool exists to avoid. Execute via VS Code's notebook UI or convert to scripts.
+**No execution.** Running code requires a kernel, which requires a server. That's the complexity this tool exists to avoid. I execute via VS Code's notebook UI and convert to scripts for production.
 
 **stdio transport only.** Launched on demand by the MCP client, communicates via stdin/stdout, exits when done. No HTTP endpoints, no WebSocket connections, no persistent processes.
 
 ## Install
+
+```bash
+# Clone (or add as git submodule)
+git clone https://github.com/tony-zhelonkin/notebook-tools-mcp.git
+
+# Install in editable mode — Python can import the package,
+# and any code changes take effect without reinstalling
+pip install -e notebook-tools-mcp/
+```
+
+Or if you're already inside the cloned directory:
 
 ```bash
 pip install -e .
@@ -42,7 +53,7 @@ Add to `.mcp.json`:
 }
 ```
 
-Or toggle via SciAgent-toolkit addon system:
+Or toggle via [SciAgent-toolkit](https://github.com/tony-zhelonkin/SciAgent-toolkit) addon system:
 
 ```bash
 ./scripts/manage-addon.sh enable notebook-tools --project-dir /path/to/project
@@ -65,7 +76,7 @@ All tools take `notebook_path` (absolute path) as first parameter.
 
 Against a 1.15 MB notebook (41 cells, 93% output data):
 
-| Operation | Standard `Read` | This MCP |
+| Operation | Standard claude code `Read` | notebook-tools-mcp |
 |---|---|---|
 | Understand notebook structure | ~294K tokens (full file) | ~690 tokens (`nb_overview`) |
 | Read one cell | ~294K tokens (full file) | ~100 tokens (`nb_read_cell`) |
