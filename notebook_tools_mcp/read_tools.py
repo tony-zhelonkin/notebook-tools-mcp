@@ -57,7 +57,7 @@ def nb_metadata(notebook_path: str) -> str:
 
 @mcp.tool()
 def nb_overview(notebook_path: str, include_output_sizes: bool = True) -> str:
-    """START HERE for any .ipynb file. Lists all cells with index, type, line count, char count, and first-line preview. Use the cell indices in output to target nb_read_cell, nb_write_cell, etc."""
+    """START HERE for any .ipynb file. Lists all cells with positional index, type, line count, and first-line preview. All notebook-tools use these indices (not cell IDs) — pass them to nb_read_cell, nb_write_cell, nb_insert_cell, nb_delete_cell."""
     try:
         nb = load_notebook(notebook_path)
     except (FileNotFoundError, ValueError) as e:
@@ -101,7 +101,7 @@ def nb_read_cell(
     include_outputs: bool = False,
     max_output_chars: int = 2000,
 ) -> str:
-    """Read full source of one cell by index (from nb_overview). Use instead of the Read tool for .ipynb — avoids loading raw JSON. Set include_outputs=true only when you need execution output."""
+    """Read full source of one cell by index (from nb_overview). To edit, use nb_write_cell with the same cell_index. Avoids loading raw JSON. Set include_outputs=true only when you need execution output."""
     try:
         nb = load_notebook(notebook_path)
     except (FileNotFoundError, ValueError) as e:

@@ -18,7 +18,7 @@ from notebook_tools_mcp._helpers import (
 
 @mcp.tool()
 def nb_write_cell(notebook_path: str, cell_index: int, source: str) -> str:
-    """Overwrite cell source by index (from nb_overview). Use when you already know the cell index from nb_overview/nb_read_cell. Prefer this over NotebookEdit when working within the nb_overview workflow."""
+    """Overwrite cell source by index (from nb_overview). All notebook-tools use positional indices, not cell IDs. Prefer this over NotebookEdit when working within the nb_overview workflow."""
     try:
         nb = load_notebook(notebook_path)
     except (FileNotFoundError, ValueError) as e:

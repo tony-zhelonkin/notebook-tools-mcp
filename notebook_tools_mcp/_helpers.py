@@ -109,9 +109,7 @@ def format_cell(
     ct = cell.get("cell_type", "unknown")
     src = get_cell_source(cell)
     n_lines = len(src.split("\n"))
-    cell_id = cell.get("id", "none")
-
-    header = f"# Cell {index} ({ct}) | {n_lines} lines | id: {cell_id}"
+    header = f"# Cell {index} ({ct}) | {n_lines} lines"
     parts = [header, src]
 
     if include_outputs and cell.get("outputs"):
